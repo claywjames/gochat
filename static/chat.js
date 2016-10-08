@@ -13,3 +13,8 @@ function sendMessage() {
     socket.send(message);
     return false;
 }
+
+document.getElementById("chatForm").addEventListener("submit", function(event) {
+    sendMessage();
+    event.preventDefault();
+}, false)

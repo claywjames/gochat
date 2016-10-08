@@ -2,6 +2,7 @@ package main
 
 import (
     "log"
+    "fmt"
     "os"
     "net/http"
     "github.com/gorilla/websocket"
@@ -45,15 +46,17 @@ func websocketHandler(w http.ResponseWriter, r *http.Request) {
             break
         }
         if messageType == websocket.TextMessage {
-            broadcastMessage(data)
+            broadcastMessage(id, data)
         }
 
     }
 }
 
-func broadcastMessage(message []byte) {
+func broadcastMessage(name int, message []byte) {
+    id := fmt.Sprintf("%d", name)
+    namedMessage := []byte(id + ": " + string(message))
     for _, conn := range connections {
-        if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
+        if err := conn.WriteMessage(websocket.TextMessage, namedMessage); err != nil {
             log.Println(err)
         }
     }
