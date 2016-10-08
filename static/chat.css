@@ -1,0 +1,18 @@
+header {
+    text-align: center;
+}
+
+form {
+    position: absolute;
+    top: 95%;
+    width: 98%;
+}
+
+#messageInput {
+    width: 95%;
+}
+
+#sendButton {
+    width: 4%;
+    height: 90%;
+}
