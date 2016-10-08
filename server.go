@@ -8,8 +8,20 @@ import (
     "github.com/gorilla/websocket"
 )
 
-var connections map[int]*websocket.Conn = make(map[int]*websocket.Conn)
+var connections []group = make([]group, 10)
 var id int = 0
+
+type chatClient struct {
+    name int
+    conn *websocket.Conn
+}
+
+type group struct {
+    name string
+    members []chatClient
+}
+
+var mangos group = group{"mangos", []chatClient{}}
 
 func main() {
     fileServer := http.FileServer(http.Dir("static"))
@@ -37,7 +49,8 @@ func websocketHandler(w http.ResponseWriter, r *http.Request) {
     log.Println("Client connected")
 
     id++
-    connections[id] = conn;
+    newClient := chatClient{id, conn}
+    mangos.members = append(mangos.members, newClient)
 
     for {
         messageType, data, err := conn.ReadMessage()
@@ -46,17 +59,19 @@ func websocketHandler(w http.ResponseWriter, r *http.Request) {
             break
         }
         if messageType == websocket.TextMessage {
-            broadcastMessage(id, data)
+            log.Println("Before broadcastMessage")
+            mangos.broadcastMessage(newClient.name, data)
         }
 
     }
 }
 
-func broadcastMessage(name int, message []byte) {
+func (g * group) broadcastMessage(name int, message []byte) {
     id := fmt.Sprintf("%d", name)
     namedMessage := []byte(id + ": " + string(message))
-    for _, conn := range connections {
-        if err := conn.WriteMessage(websocket.TextMessage, namedMessage); err != nil {
+    for _, member := range g.members {
+        log.Println(member)
+        if err := member.conn.WriteMessage(websocket.TextMessage, namedMessage); err != nil {
             log.Println(err)
         }
     }
