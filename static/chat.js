@@ -9,7 +9,9 @@ socket.onmessage = function(e) {
 }
 
 function sendMessage() {
-    var message = document.getElementById("messageInput").value;
+    var messageBox = document.getElementById("messageInput");
+    var message = messageBox.value;
+    messageBox.value = "";
     socket.send(message);
     return false;
 }
