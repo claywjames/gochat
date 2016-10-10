@@ -2,17 +2,29 @@ package main
 
 import (
     "log"
-    "fmt"
     "os"
     "net/http"
     "github.com/gorilla/websocket"
+    "errors"
 )
 
 var connections []group = make([]group, 10)
-var id int = 0
+
+type msg struct {
+    MsgType string
+    Username string
+    Password string
+    Message string
+}
+
+type clientAccount struct {
+    username string
+    password string
+    groups []group
+}
 
 type chatClient struct {
-    name int
+    account clientAccount
     conn *websocket.Conn
 }
 
@@ -22,6 +34,12 @@ type group struct {
 }
 
 var mangos group = group{"mangos", []chatClient{}}
+var clay clientAccount = clientAccount{
+    username: "clay",
+    password: "1234",
+    groups: []group{mangos},
+}
+var users []clientAccount = []clientAccount{clay}
 
 func main() {
     fileServer := http.FileServer(http.Dir("static"))
@@ -38,42 +56,59 @@ func main() {
 var upgrader = websocket.Upgrader{
     ReadBufferSize:  1024,
     WriteBufferSize: 1024,
+    Subprotocols: []string{"name"},
 }
 
 func websocketHandler(w http.ResponseWriter, r *http.Request) {
+    var newClient chatClient;
     conn, err := upgrader.Upgrade(w, r, nil) 
     if err != nil {
         log.Println(err)
         return
     }
-    log.Println("Client connected")
 
-    id++
-    newClient := chatClient{id, conn}
+    message := msg{}
+    if err := conn.ReadJSON(&message); err != nil {
+        log.Println(err)
+        return
+    }
+
+    if message.MsgType == "LOGIN" {
+        if account, err := getAccount(message.Username, message.Password); err != nil {
+            log.Println(err)
+        } else {
+            newClient = chatClient{account, conn}
+            log.Println(message.Username + " connected")
+        }
+    }
+
     mangos.members = append(mangos.members, newClient)
 
     for {
-        messageType, data, err := conn.ReadMessage()
-        if err != nil {
+        text := msg{}
+        if err := conn.ReadJSON(&text); err != nil {
             log.Println(err)
             break
         }
-        if messageType == websocket.TextMessage {
-            log.Println("Before broadcastMessage")
-            mangos.broadcastMessage(newClient.name, data)
-        }
+        mangos.broadcastMessage(newClient.account.username, []byte(text.Message))
 
     }
 }
 
-func (g * group) broadcastMessage(name int, message []byte) {
-    id := fmt.Sprintf("%d", name)
-    namedMessage := []byte(id + ": " + string(message))
+func (g * group) broadcastMessage(name string, message []byte) {
+    message = []byte(name + ": " + string(message))
     for _, member := range g.members {
-        log.Println(member)
-        if err := member.conn.WriteMessage(websocket.TextMessage, namedMessage); err != nil {
+        if err := member.conn.WriteMessage(websocket.TextMessage, message); err != nil {
             log.Println(err)
         }
     }
 }
 
+func getAccount(username string, password string) (clientAccount, error) {
+    for _, user := range users {
+        if username == user.username && password == user.password {
+            return user, nil
+        }
+    }
+    return clientAccount{"", "", []group{}}, errors.New("No Account Found")
+}
