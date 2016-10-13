@@ -5,51 +5,66 @@ import (
     "os"
     "net/http"
     "github.com/gorilla/websocket"
-    "errors"
+    "github.com/gorilla/mux"
+    "github.com/gorilla/securecookie"
+    //"errors"
 )
 
 var connections []group = make([]group, 10)
 
+var cookieHandler = securecookie.New(securecookie.GenerateRandomKey(64), securecookie.GenerateRandomKey(32))
+
 type msg struct {
-    MsgType string
-    Username string
-    Password string
     Message string
 }
 
 type clientAccount struct {
-    username string
-    password string
-    groups []group
+    Username string
+    Password string
+    Groups []group
 }
 
 type chatClient struct {
-    account clientAccount
-    conn *websocket.Conn
+    Account clientAccount
+    Conn *websocket.Conn
 }
 
 type group struct {
-    name string
-    members []chatClient
+    Name string
+    Members []chatClient
 }
 
 var mangos group = group{"mangos", []chatClient{}}
 var clay clientAccount = clientAccount{
-    username: "clay",
-    password: "1234",
-    groups: []group{mangos},
+    Username: "clay",
+    Password: "1234",
+    Groups: []group{mangos},
 }
-var users []clientAccount = []clientAccount{clay}
+var thomas = clientAccount {
+    Username: "thomas",
+    Password: "1234",
+    Groups: []group{mangos},
+}
+var users []clientAccount = []clientAccount{clay, thomas,}
 
 func main() {
-    fileServer := http.FileServer(http.Dir("static"))
-    http.Handle("/", fileServer)
+    r := mux.NewRouter()
 
-    http.HandleFunc("/websocket", websocketHandler)
+    r.HandleFunc("/login", loginPageHandler).Methods("POST")
+    r.HandleFunc("/logout", logoutPageHandler).Methods("POST")
+
+    r.HandleFunc("/websocket", websocketHandler)
+
+    r.HandleFunc("/chat", chatHandler)
+
+    r.HandleFunc("/", landingPageHandler)
+    r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
     log.SetOutput(os.Stdout)
     log.Println("Listening on port 3000...")
     
+    http.Handle("/", r)
+
     http.ListenAndServe(":3000", nil)
 }
 
@@ -59,56 +74,115 @@ var upgrader = websocket.Upgrader{
     Subprotocols: []string{"name"},
 }
 
+func landingPageHandler(w http.ResponseWriter, r *http.Request) {
+    http.ServeFile(w, r, "static/first.html")
+}
+
+func loginPageHandler(w http.ResponseWriter, r *http.Request) {
+    username, password := r.FormValue("username"), r.FormValue("password")
+    redirectTarget := "/"
+    if username != "" && password != "" {
+        if validateAccount(username, password) {
+            redirectTarget = "/chat"
+            setSession(username, w)
+        }
+        http.Redirect(w, r, redirectTarget, 302)
+    }
+}
+
+func setSession(username string, w http.ResponseWriter) {
+    value := map[string]string{
+        "username": username,
+    }
+    if encoded, err := cookieHandler.Encode("session", value); err == nil {
+        cookie := &http.Cookie{
+            Name:  "session",
+            Value: encoded,
+            Path:  "/",
+        }
+        http.SetCookie(w, cookie)
+    }
+}
+
+func logoutPageHandler(w http.ResponseWriter, r *http.Request) {
+    clearSession(w)
+    http.Redirect(w, r, "/", 302)
+}
+
+func clearSession(w http.ResponseWriter) {
+    cookie := &http.Cookie{
+        Name: "session",
+        Value: "",
+        Path: "/",
+        MaxAge: -1,
+    }
+    http.SetCookie(w, cookie)
+}
+
+func chatHandler(w http.ResponseWriter, r *http.Request) {
+    http.ServeFile(w, r, "static/chat.html")
+}
+
 func websocketHandler(w http.ResponseWriter, r *http.Request) {
-    var newClient chatClient;
     conn, err := upgrader.Upgrade(w, r, nil) 
     if err != nil {
         log.Println(err)
         return
     }
 
-    message := msg{}
-    if err := conn.ReadJSON(&message); err != nil {
-        log.Println(err)
-        return
+    sender := getUsername(r)
+    account := getAccount(sender)
+    newClient := chatClient{
+        Account: account,
+        Conn: conn,
     }
 
-    if message.MsgType == "LOGIN" {
-        if account, err := getAccount(message.Username, message.Password); err != nil {
-            log.Println(err)
-        } else {
-            newClient = chatClient{account, conn}
-            log.Println(message.Username + " connected")
-        }
-    }
-
-    mangos.members = append(mangos.members, newClient)
+    mangos.Members = append(mangos.Members, newClient)
 
     for {
-        text := msg{}
-        if err := conn.ReadJSON(&text); err != nil {
+        message := msg{}
+        if err := conn.ReadJSON(&message); err != nil {
             log.Println(err)
             break
         }
-        mangos.broadcastMessage(newClient.account.username, []byte(text.Message))
+        mangos.broadcastMessage(sender, []byte(message.Message))
 
     }
+}
+
+func getUsername(r *http.Request) (username string) {
+    if cookie, err := r.Cookie("session"); err == nil {
+        cookieValue := make(map[string]string)
+        if err = cookieHandler.Decode("session", cookie.Value, &cookieValue); err == nil {
+            username = cookieValue["username"]
+        }
+    }
+    return username
 }
 
 func (g * group) broadcastMessage(name string, message []byte) {
     message = []byte(name + ": " + string(message))
-    for _, member := range g.members {
-        if err := member.conn.WriteMessage(websocket.TextMessage, message); err != nil {
+    for _, member := range g.Members {
+        if err := member.Conn.WriteMessage(websocket.TextMessage, message); err != nil {
             log.Println(err)
         }
     }
 }
 
-func getAccount(username string, password string) (clientAccount, error) {
+func validateAccount(username string, password string) bool {
     for _, user := range users {
-        if username == user.username && password == user.password {
-            return user, nil
+        if username == user.Username && password == user.Password {
+            return true
         }
     }
-    return clientAccount{"", "", []group{}}, errors.New("No Account Found")
+    return false
+}
+
+func getAccount(username string) (account clientAccount) {
+    for _, user := range users {
+        if username == user.Username {
+            account = user
+        }
+    }
+    return account
 }
