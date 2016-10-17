@@ -33,12 +33,38 @@ li a:hover {
     text-decoration: underline;
     
 }
+
+.loginform ul {
+  padding: 5px;
+  margin: auto;
+}
+
+.loginform li {
+  color: #fff;
+  margin: auto;
+ 
+}
+
+.loginform input:not([type=submit]) {
+  padding: 5px;
+  margin-right: 100px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, 0.1), 
+        0px 1px 0px 0px rgba(250, 250, 250, 0.5) ;
+  text-align: left;
+}
+
+.loginform 2 input:not([input=submit]) {
+    font-family: arial;
+}
+
 </style>
 </head>
 <body>
 
-<h1>GoChat - 90s edition</h1>
-<h2>Here's some shit you can do with this chat service:</h2>
+<h1>GoChat/h1>
+<h2>Sign Up!</h2>
 
 <ul>
   <li><a href="#home">Home</a></li>
@@ -48,6 +74,21 @@ li a:hover {
 </ul>
 
 <br><br><br><br><br><br><br><br>
+
+<p>Please sign up to continue:</p>
+
+
+<section class="loginform cf">
+<form name="login" action="other_page1" method="get" accept-charset="utf-8">
+  <ul>
+    <li><label for="usermail">Email</label>
+    <input type="email" name="usermail" placeholder="xxx@email.com" required></li>
+    <li><label for="password">Password</label>
+    <input type="password" name="password" placeholder="Password" required></li>
+    <li>
+    <input type="submit" value="Login"></li>
+  </ul>
+</form>
 
 <p>Please log in to this beautiful page to continue:</p>
 
