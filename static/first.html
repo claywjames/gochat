@@ -7,6 +7,9 @@ h1   {color:blue;font-family:arial;}
 h2   {font-family:arial;}
 ul   {text-align: center;list-style-position:inside;font-family:arial;}
 p    {font-family:arial;}
+p2   {font0family:arial;font-size: 20px;display:inline block;}
+p3   {font-family:arial;font-size: 18px;padding:5px;}
+p4   {font-family:arial;font-size: 18px;padding:5px;}
 
 ul {
     list-style-type: none;
@@ -35,51 +38,64 @@ li a:hover {
 }
 
 .loginform ul {
-  padding: 5px;
+  padding: 10px;
   margin: auto;
+  width: 200px;
+
 }
 
 .loginform li {
   color: #fff;
   margin: auto;
+  padding: 5px;
  
 }
 
 .loginform input:not([type=submit]) {
-  padding: 5px;
-  margin-right: 100px;
+  padding: 1px;
+  margin: auto;
   border: 2px solid rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
+  border-radius: 2px;
   box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, 0.1), 
         0px 1px 0px 0px rgba(250, 250, 250, 0.5) ;
   text-align: left;
+  font-family: arial;
+  width: 180px;
 }
 
-.loginform 2 input:not([input=submit]) {
-    font-family: arial;
+.loginform input{
+  text-align: center;
+  margin: auto;
+  width: 190px;
+  
+}
+
+.actualloginform input:not([type=submit]) {
+  padding: 1px;
+
 }
 
 </style>
 </head>
 <body>
 
-<h1>GoChat/h1>
+<h1>GoChat</h1>
 <h2>Sign Up!</h2>
 
 <ul>
-  <li><a href="#home">Home</a></li>
-  <li><a href="#news">Friends</a></li>
-  <li><a href="#contact">About</a></li>
-  <li><a href="#about">Help</a></li>
+  <li><a href="#Home Page">Home</a></li>
+  <li><a href="#Friends Page">Friends</a></li>
+  <li><a href="#About Page">About</a></li>
+  <li><a href="#Help Page">Help</a></li>
 </ul>
 
-<br><br><br><br><br><br><br><br>
+<br><br><br><br>
 
-<p>Please sign up to continue:</p>
+<p>Sign up:</p>
 
 
 <section class="loginform cf">
-<form name="login" action="other_page1" method="get" accept-charset="utf-8">
+<form name="login" action="successful_sign_up_page" method="get" accept-charset="utf-8">
   <ul>
     <li><label for="usermail">Email</label>
     <input type="email" name="usermail" placeholder="xxx@email.com" required></li>
@@ -90,14 +106,18 @@ li a:hover {
   </ul>
 </form>
 
-<p>Please log in to this beautiful page to continue:</p>
+<br><br>
 
+<p2>Or log in if you already have an account:</p2>
+
+<section class="actualloginform">
 <form action="/login" method = "post">
-Username:<br>
+<p3>Username:</p3><br>
 <input type="text" name="username"><br>
-Password:<br>
+<p4>Password:</p4><br>
 <input type="password" name="password"><br><br>
 <input type="submit" value="Submit">
+</section>
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
