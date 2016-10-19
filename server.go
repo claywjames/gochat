@@ -7,7 +7,9 @@ import (
     "github.com/gorilla/websocket"
     "github.com/gorilla/mux"
     "github.com/gorilla/securecookie"
-    //"errors"
+    "errors"
+    "gopkg.in/mgo.v2"
+    "gopkg.in/mgo.v2/bson"
 )
 
 var connections []group = make([]group, 10)
@@ -35,23 +37,13 @@ type group struct {
 }
 
 var mangos group = group{"mangos", []chatClient{}}
-var clay clientAccount = clientAccount{
-    Username: "clay",
-    Password: "1234",
-    Groups: []group{mangos},
-}
-var thomas = clientAccount {
-    Username: "thomas",
-    Password: "1234",
-    Groups: []group{mangos},
-}
-var users []clientAccount = []clientAccount{clay, thomas,}
 
 func main() {
     r := mux.NewRouter()
 
     r.HandleFunc("/login", loginPageHandler).Methods("POST")
     r.HandleFunc("/logout", logoutPageHandler).Methods("POST")
+    r.HandleFunc("/signup", signupPageHandler).Methods("POST")
 
     r.HandleFunc("/websocket", websocketHandler)
 
@@ -119,6 +111,36 @@ func clearSession(w http.ResponseWriter) {
     http.SetCookie(w, cookie)
 }
 
+func signupPageHandler(w http.ResponseWriter, r *http.Request) {
+    username, password := r.FormValue("username"), r.FormValue("password")
+    err := createAccount(username, password)
+    if err == nil {
+        setSession(username, w)
+        http.Redirect(w, r, "/chat", 302)
+    } else {
+        http.Redirect(w, r, "/", 302)
+    }
+}
+
+func createAccount(username string, password string) error {
+    if _, err := getAccount(username); err == nil {
+        return errors.New("username taken")
+    }
+    session, err := mgo.Dial("localhost")
+    if err != nil {
+        log.Println(err)
+    }
+    defer session.Close()
+
+    c := session.DB("plaintext").C("accounts")
+    groups := []group{}
+    err = c.Insert(&clientAccount{username, password, groups})
+    if err != nil {
+        log.Println(err)
+    }
+    return nil
+}
+
 func chatHandler(w http.ResponseWriter, r *http.Request) {
     http.ServeFile(w, r, "static/chat.html")
 }
@@ -131,7 +153,7 @@ func websocketHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     sender := getUsername(r)
-    account := getAccount(sender)
+    account, _ := getAccount(sender)
     newClient := chatClient{
         Account: account,
         Conn: conn,
@@ -170,19 +192,25 @@ func (g * group) broadcastMessage(name string, message []byte) {
 }
 
 func validateAccount(username string, password string) bool {
-    for _, user := range users {
-        if username == user.Username && password == user.Password {
-            return true
-        }
+    account, err := getAccount(username)
+    if err != nil {
+        return false
     }
-    return false
+    if account.Password != password {
+        return false
+    }
+    return true
 }
 
-func getAccount(username string) (account clientAccount) {
-    for _, user := range users {
-        if username == user.Username {
-            account = user
-        }
+func getAccount(username string) (account clientAccount, err error) {
+    session, err := mgo.Dial("localhost")
+    if err != nil {
+        log.Println(err)
     }
-    return account
+    defer session.Close()
+
+    c := session.DB("plaintext").C("accounts")
+
+    err = c.Find(bson.M{"username":username}).One(&account)
+    return 
 }
