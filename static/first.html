@@ -37,21 +37,21 @@ li a:hover {
     
 }
 
-.loginform ul {
+.signupForm ul {
   padding: 10px;
   margin: auto;
   width: 200px;
 
 }
 
-.loginform li {
+.signupForm li {
   color: #fff;
   margin: auto;
   padding: 5px;
  
 }
 
-.loginform input:not([type=submit]) {
+.signupForm input:not([type=submit]) {
   padding: 1px;
   margin: auto;
   border: 2px solid rgba(0, 0, 0, 0.2);
@@ -63,14 +63,14 @@ li a:hover {
   width: 180px;
 }
 
-.loginform input{
+.signupForm input{
   text-align: center;
   margin: auto;
   width: 190px;
   
 }
 
-.actualloginform input:not([type=submit]) {
+.loginform input:not([type=submit]) {
   padding: 1px;
 
 }
@@ -94,34 +94,34 @@ li a:hover {
 <p>Sign up:</p>
 
 
-<section class="loginform cf">
-<form name="login" action="successful_sign_up_page" method="get" accept-charset="utf-8">
-  <ul>
-    <li><label for="usermail">Email</label>
-    <input type="email" name="usermail" placeholder="xxx@email.com" required></li>
-    <li><label for="password">Password</label>
-    <input type="password" name="password" placeholder="Password" required></li>
-    <li>
-    <input type="submit" value="Login"></li>
-  </ul>
-</form>
+<section class="signupForm">
+  <form name="signup" action="/signup" method="post" accept-charset="utf-8">
+    <ul>
+      <li><label for="username">Username</label>
+      <input name="username" placeholder="username" required></li>
+      <li><label for="password">Password</label>
+      <input type="password" name="password" placeholder="Password" required></li>
+      <li>
+      <input type="submit" value="Sign Up"></li>
+    </ul>
+  </form>
+</section>
 
 <br><br>
 
 <p2>Or log in if you already have an account:</p2>
 
-<section class="actualloginform">
-<form action="/login" method = "post">
-<p3>Username:</p3><br>
-<input type="text" name="username"><br>
-<p4>Password:</p4><br>
-<input type="password" name="password"><br><br>
-<input type="submit" value="Submit">
+<section class="loginform">
+  <form name = "login" action="/login" method = "post">
+    <p3>Username:</p3><br>
+    <input type="text" name="username" placeholder="username" required><br>
+    <p4>Password:</p4><br>
+    <input type="password" name="password" placeholder="password" required><br><br>
+    <input type="submit" value="Submit">
+  </form>
 </section>
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-
-</form>
 
 </body>
 </html>
