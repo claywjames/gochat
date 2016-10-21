@@ -6,24 +6,12 @@ import (
     "net/http"
     "github.com/gorilla/websocket"
     "github.com/gorilla/mux"
-    "github.com/gorilla/securecookie"
-    "errors"
-    "gopkg.in/mgo.v2"
-    "gopkg.in/mgo.v2/bson"
 )
 
 var connections []group = make([]group, 10)
 
-var cookieHandler = securecookie.New(securecookie.GenerateRandomKey(64), securecookie.GenerateRandomKey(32))
-
 type msg struct {
     Message string
-}
-
-type clientAccount struct {
-    Username string
-    Password string
-    Groups []group
 }
 
 type chatClient struct {
@@ -82,33 +70,9 @@ func loginPageHandler(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-func setSession(username string, w http.ResponseWriter) {
-    value := map[string]string{
-        "username": username,
-    }
-    if encoded, err := cookieHandler.Encode("session", value); err == nil {
-        cookie := &http.Cookie{
-            Name:  "session",
-            Value: encoded,
-            Path:  "/",
-        }
-        http.SetCookie(w, cookie)
-    }
-}
-
 func logoutPageHandler(w http.ResponseWriter, r *http.Request) {
     clearSession(w)
     http.Redirect(w, r, "/", 302)
-}
-
-func clearSession(w http.ResponseWriter) {
-    cookie := &http.Cookie{
-        Name: "session",
-        Value: "",
-        Path: "/",
-        MaxAge: -1,
-    }
-    http.SetCookie(w, cookie)
 }
 
 func signupPageHandler(w http.ResponseWriter, r *http.Request) {
@@ -120,25 +84,6 @@ func signupPageHandler(w http.ResponseWriter, r *http.Request) {
     } else {
         http.Redirect(w, r, "/", 302)
     }
-}
-
-func createAccount(username string, password string) error {
-    if _, err := getAccount(username); err == nil {
-        return errors.New("username taken")
-    }
-    session, err := mgo.Dial("localhost")
-    if err != nil {
-        log.Println(err)
-    }
-    defer session.Close()
-
-    c := session.DB("plaintext").C("accounts")
-    groups := []group{}
-    err = c.Insert(&clientAccount{username, password, groups})
-    if err != nil {
-        log.Println(err)
-    }
-    return nil
 }
 
 func chatHandler(w http.ResponseWriter, r *http.Request) {
@@ -172,16 +117,6 @@ func websocketHandler(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-func getUsername(r *http.Request) (username string) {
-    if cookie, err := r.Cookie("session"); err == nil {
-        cookieValue := make(map[string]string)
-        if err = cookieHandler.Decode("session", cookie.Value, &cookieValue); err == nil {
-            username = cookieValue["username"]
-        }
-    }
-    return username
-}
-
 func (g * group) broadcastMessage(name string, message []byte) {
     message = []byte(name + ": " + string(message))
     for _, member := range g.Members {
@@ -189,28 +124,4 @@ func (g * group) broadcastMessage(name string, message []byte) {
             log.Println(err)
         }
     }
-}
-
-func validateAccount(username string, password string) bool {
-    account, err := getAccount(username)
-    if err != nil {
-        return false
-    }
-    if account.Password != password {
-        return false
-    }
-    return true
-}
-
-func getAccount(username string) (account clientAccount, err error) {
-    session, err := mgo.Dial("localhost")
-    if err != nil {
-        log.Println(err)
-    }
-    defer session.Close()
-
-    c := session.DB("plaintext").C("accounts")
-
-    err = c.Find(bson.M{"username":username}).One(&account)
-    return 
 }
