@@ -2,13 +2,15 @@
 body {text-align: center;height: 100%;background: linear-gradient(180deg, LightSteelBlue, #174f60 50%);}
 h1   {color:blue;font-family:arial;}
 h2   {font-family:arial;}
-ul   {text-align: center;list-style-position:inside;font-family:arial;}
-p    {font-family:arial;}
+p    {font-family:arial;font-size: 20px;}
 p2   {font-family:arial;font-size: 20px;display:inline block;}
 p3   {font-family:arial;font-size: 18px;padding:5px;}
 p4   {font-family:arial;font-size: 18px;padding:5px;}
 
 ul {
+    text-align: center;
+    list-style-position:inside;
+    font-family:arial;
     list-style-type: none;
     margin: auto;
     padding: 0;
@@ -67,8 +69,5 @@ li a:hover {
   
 }
 
-.loginform input:not([type=submit]) {
-  padding: 1px;
 
-}
 
