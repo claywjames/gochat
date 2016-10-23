@@ -6,6 +6,7 @@ socket.onclose = function(e) {console.log("connection closed: " + e.code)}
 socket.onmessage = function(e) {
     var messageBox = document.getElementById("messageBox");
     messageBox.innerHTML += e.data + "<br>";
+    messageBox.scrollTop = messageBox.scrollHeight;
 }
 
 function sendMessage() {

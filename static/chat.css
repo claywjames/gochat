@@ -2,6 +2,11 @@ header {
     text-align: center;
 }
 
+#messageBox {
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
 form {
     position: absolute;
     top: 95%;
