@@ -12,6 +12,7 @@ var connections []group = make([]group, 10)
 
 type msg struct {
     Message string
+    Sender string
 }
 
 type chatClient struct {
@@ -107,21 +108,31 @@ func websocketHandler(w http.ResponseWriter, r *http.Request) {
     mangos.Members = append(mangos.Members, newClient)
 
     for {
-        message := msg{}
+        message := msg{"", sender}
         if err := conn.ReadJSON(&message); err != nil {
             log.Println(err)
             break
         }
-        mangos.broadcastMessage(sender, []byte(message.Message))
-
+        mangos.broadcastMessage(message)
+        //mangos.saveMessage(message msg)
     }
 }
 
-func (g * group) broadcastMessage(name string, message []byte) {
-    message = []byte(name + ": " + string(message))
+func (g * group) broadcastMessage(message msg) {
     for _, member := range g.Members {
-        if err := member.Conn.WriteMessage(websocket.TextMessage, message); err != nil {
+        if err := member.Conn.WriteJSON(message); err != nil {
             log.Println(err)
         }
     }
 }
+
+// func (g * group) saveMessage(message msg) {
+//     session, err := mgo.Dial("localhost")
+//     if err != nil {
+//         log.Println(err)
+//     }
+//     defer session.Close()
+
+//     message = message.Sender + ": " + message.Message
+//     c := session.DB("gochat").C("groups")
+//}
