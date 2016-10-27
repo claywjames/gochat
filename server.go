@@ -4,28 +4,8 @@ import (
     "log"
     "os"
     "net/http"
-    "github.com/gorilla/websocket"
     "github.com/gorilla/mux"
 )
-
-var connections []group = make([]group, 10)
-
-type msg struct {
-    Message string
-    Sender string
-}
-
-type chatClient struct {
-    Account clientAccount
-    Conn *websocket.Conn
-}
-
-type group struct {
-    Name string
-    Members []chatClient
-}
-
-var mangos group = group{"mangos", []chatClient{}}
 
 func main() {
     r := mux.NewRouter()
@@ -33,10 +13,12 @@ func main() {
     r.HandleFunc("/login", loginPageHandler).Methods("POST")
     r.HandleFunc("/logout", logoutPageHandler).Methods("POST")
     r.HandleFunc("/signup", signupPageHandler).Methods("POST")
+    r.HandleFunc("/createGroupPage", createGroupPageHandler)
+    r.HandleFunc("/createGroup", groupCreationHandler).Methods("POST")
 
-    r.HandleFunc("/websocket", websocketHandler)
+    r.HandleFunc("/websocket", messagingHandler)
 
-    r.HandleFunc("/chat", chatHandler)
+    r.HandleFunc("/chat", chatPageHandler)
 
     r.HandleFunc("/", landingPageHandler)
     r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
@@ -49,10 +31,26 @@ func main() {
     http.ListenAndServe(":3000", nil)
 }
 
-var upgrader = websocket.Upgrader{
-    ReadBufferSize:  1024,
-    WriteBufferSize: 1024,
-    Subprotocols: []string{"name"},
+func createGroupPageHandler(w http.ResponseWriter, r *http.Request) {
+    http.ServeFile(w, r, "static/groupmaking.html")
+}
+
+func groupCreationHandler(w http.ResponseWriter, r *http.Request) {
+    defer http.Redirect(w, r, "/chat", 302)
+    groupName, groupMember := r.FormValue("groupName"), r.FormValue("groupMember")
+    creator := getUsername(r)
+    groupMemberAccount, err := getAccount(groupMember)
+    if err != nil {
+        log.Println(err)
+        return
+    }
+    creatorAccount, _ := getAccount(creator)
+
+    err = createGroup(groupName, []clientAccount{creatorAccount, groupMemberAccount})
+    if err != nil {
+        log.Println(err)
+        return
+    }
 }
 
 func landingPageHandler(w http.ResponseWriter, r *http.Request) {
@@ -87,52 +85,6 @@ func signupPageHandler(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-func chatHandler(w http.ResponseWriter, r *http.Request) {
+func chatPageHandler(w http.ResponseWriter, r *http.Request) {
     http.ServeFile(w, r, "static/chat.html")
 }
-
-func websocketHandler(w http.ResponseWriter, r *http.Request) {
-    conn, err := upgrader.Upgrade(w, r, nil) 
-    if err != nil {
-        log.Println(err)
-        return
-    }
-
-    sender := getUsername(r)
-    account, _ := getAccount(sender)
-    newClient := chatClient{
-        Account: account,
-        Conn: conn,
-    }
-
-    mangos.Members = append(mangos.Members, newClient)
-
-    for {
-        message := msg{"", sender}
-        if err := conn.ReadJSON(&message); err != nil {
-            log.Println(err)
-            break
-        }
-        mangos.broadcastMessage(message)
-        //mangos.saveMessage(message msg)
-    }
-}
-
-func (g * group) broadcastMessage(message msg) {
-    for _, member := range g.Members {
-        if err := member.Conn.WriteJSON(message); err != nil {
-            log.Println(err)
-        }
-    }
-}
-
-// func (g * group) saveMessage(message msg) {
-//     session, err := mgo.Dial("localhost")
-//     if err != nil {
-//         log.Println(err)
-//     }
-//     defer session.Close()
-
-//     message = message.Sender + ": " + message.Message
-//     c := session.DB("gochat").C("groups")
-//}

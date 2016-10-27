@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Make a Group</title>
+        <link href = "groupmaking.css" rel = "stylesheet">
+    </head>
+    <body>
+        <section class="makegroup">
+            <form name="groupcreation" action="/createGroup" method="post" accept-charset="utf-8">
+                <ul>
+                    <li><label for="groupName">Group Name</label>
+                    <input name="groupName" placeholder="Enter group name" required></li>
+                    <li><label for="groupMember">Group Members</label>
+                    <input name="groupMember" placeholder="Enter group memeber" required></li>
+                    <li>
+                    <input type="submit" value="Create Group"></li>
+                </ul>
+            </form>
+        </section>
+    </body>
+</html>
