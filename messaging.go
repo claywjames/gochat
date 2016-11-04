@@ -19,7 +19,6 @@ var upgrader = websocket.Upgrader{
 
 func messagingHandler(w http.ResponseWriter, r *http.Request) {
     sender := getUsername(r)
-    log.Println(sender)
     account, _ := getAccount(sender)
     if len(account.Groups) > 0 {
         conn, err := upgrader.Upgrade(w, r, nil) 
