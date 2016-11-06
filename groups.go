@@ -42,6 +42,8 @@ func createGroup(name string, members []clientAccount) error {
     if err != nil {
         return err
     }
+    c = session.DB("gochat").C(name)
+    err = c.Insert(&msg{"I have created " + name, members[0].Username})
 
     c = session.DB("gochat").C("accounts")
     for _, member := range members {

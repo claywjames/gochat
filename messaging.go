@@ -11,7 +11,6 @@ import (
 type msg struct {
     Message string
     Sender string
-    Group string
 }
 
 var upgrader = websocket.Upgrader{

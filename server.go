@@ -51,7 +51,7 @@ func groupCreationHandler(w http.ResponseWriter, r *http.Request) {
         log.Println(err)
         return
     }
-    http.Redirect(w, r, "/chat" + groupName, 302)
+    http.Redirect(w, r, "/chat/" + groupName, 302)
 }
 
 func landingPageHandler(w http.ResponseWriter, r *http.Request) {
@@ -85,7 +85,7 @@ func signupPageHandler(w http.ResponseWriter, r *http.Request) {
     err := createAccount(username, password)
     if err == nil {
         setSession(username, w)
-        http.Redirect(w, r, "/chat", 302)
+        http.Redirect(w, r, "/createGroupPage", 302)
     } else {
         http.Redirect(w, r, "/", 302)
     }
