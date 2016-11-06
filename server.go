@@ -5,6 +5,7 @@ import (
     "os"
     "net/http"
     "github.com/gorilla/mux"
+    "html/template"
 )
 
 func main() {
@@ -16,9 +17,9 @@ func main() {
     r.HandleFunc("/createGroupPage", createGroupPageHandler)
     r.HandleFunc("/createGroup", groupCreationHandler).Methods("POST")
 
-    r.HandleFunc("/websocket", messagingHandler)
+    r.HandleFunc("/websocket/{group}", messagingHandler)
 
-    r.HandleFunc("/chat", chatPageHandler)
+    r.HandleFunc("/chat/{group}", chatPageHandler)
 
     r.HandleFunc("/", landingPageHandler)
     r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
@@ -36,7 +37,6 @@ func createGroupPageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func groupCreationHandler(w http.ResponseWriter, r *http.Request) {
-    defer http.Redirect(w, r, "/chat", 302)
     groupName, groupMember := r.FormValue("groupName"), r.FormValue("groupMember")
     creator := getUsername(r)
     groupMemberAccount, err := getAccount(groupMember)
@@ -51,6 +51,7 @@ func groupCreationHandler(w http.ResponseWriter, r *http.Request) {
         log.Println(err)
         return
     }
+    http.Redirect(w, r, "/chat" + groupName, 302)
 }
 
 func landingPageHandler(w http.ResponseWriter, r *http.Request) {
@@ -62,7 +63,12 @@ func loginPageHandler(w http.ResponseWriter, r *http.Request) {
     redirectTarget := "/"
     if username != "" && password != "" {
         if validateAccount(username, password) {
-            redirectTarget = "/chat"
+            account, _ := getAccount(username)
+            if len(account.Groups) > 0 {
+                redirectTarget = "/chat/" + account.Groups[0].Name
+            } else {
+                redirectTarget = "/createGroupPage"
+            }
             setSession(username, w)
         }
         http.Redirect(w, r, redirectTarget, 302)
@@ -86,5 +92,22 @@ func signupPageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func chatPageHandler(w http.ResponseWriter, r *http.Request) {
-    http.ServeFile(w, r, "static/chat.html")
+    t := template.New("chat.html")
+    t, err := t.ParseFiles("static/chat.html")
+    if err != nil {
+        log.Println(err)
+    }
+    user := getUsername(r)
+    account, _ := getAccount(user)
+
+    templateInfo := struct {
+        Groups []group
+        ActiveGroup string
+    } {
+        account.Groups,
+        mux.Vars(r)["group"],
+    }
+    if err = t.Execute(w, templateInfo); err != nil {
+        log.Println(err)
+    }
 }

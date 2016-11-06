@@ -1,13 +1,13 @@
-var socket = new WebSocket("ws://localhost:3000/websocket");
+var socket = new WebSocket("ws://localhost:3000/websocket/" + window.location.href.split("/").pop());
 
 socket.onopen = function() {console.log("connected")}
 socket.onclose = function(e) {console.log("connection closed: " + e.code)}
 
 socket.onmessage = function(e) {
-    var messageBox = document.getElementById("messageBox");
+    var messages = document.getElementById("messages");
     var messageObj = JSON.parse(e.data);
-    messageBox.innerHTML += messageObj.Sender + ": " + messageObj.Message + "<br>";
-    messageBox.scrollTop = messageBox.scrollHeight;
+    messages.innerHTML += messageObj.Sender + ": " + messageObj.Message + "<br>";
+    messages.scrollTop = messageBox.scrollHeight;
 }
 
 function sendMessage() {

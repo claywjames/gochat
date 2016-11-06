@@ -2,18 +2,26 @@
 <html>
     <head>
         <title>GoChat</title>
-        <link href = "chat.css" rel = "stylesheet">
+        <link href = "/../chat.css" rel = "stylesheet">
     </head>
     <body>
         <header>
             <h1>GoChat</h1>
         </header>
-        <div id = "messageBox"></div>
-        <a href = "/createGroupPage"><button>Create Group</button></a>
+        <aside>
+            <a href = "/createGroupPage"><button>Create Group</button></a>
+            {{range .Groups}}
+                <br><a href = "/chat/{{.Name}}">{{.Name}}</a>
+            {{end}}
+        </aside>
+        <div id = "messageBox">
+            <h1>{{.ActiveGroup}}</h1>
+            <div id = "messages"></div>
+        </div>
         <form id = "chatForm">
             <input id = "messageInput" placeholder = "Send a message...">
             <input id = "sendButton" type = "submit" value = "send">
         </form>
-        <script type = "text/javascript" src = "chat.js"></script>
+        <script type = "text/javascript" src = "/../chat.js"></script>
     </body>
 </html>

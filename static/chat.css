@@ -5,8 +5,22 @@ header {
     text-align: center;
 }
 
+aside {
+    float: left;
+    background-color: lightsteelblue;
+    border-radius: 5px;
+    padding: 5px;
+    width: 10vw;
+    text-align: center;
+}
+
 #messageBox {
-    max-height: 85vh;
+    float: right;
+    width: 85vw;
+}
+
+#messages {
+    max-height: 75vh;
     overflow-y: auto;
 }
 
