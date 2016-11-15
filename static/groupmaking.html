@@ -10,12 +10,13 @@
                 <ul>
                     <li><label for="groupName">Group Name</label>
                     <input name="groupName" placeholder="Enter group name" required></li>
-                    <li><label for="groupMember">Group Members</label>
-                    <input name="groupMember" placeholder="Enter group memeber" required></li>
-                    <li>
-                    <input type="submit" value="Create Group"></li>
+                    <li id = "groupMembers"><label for="groupMember1">Group Members</label>
+                    <input name="groupMember1" placeholder="Enter group memeber" required></li>
+                    <li><button type = "button" onclick="addMember();">Add Another Member</button></li>
+                    <li><input type="submit" value="Create Group"></li>
                 </ul>
             </form>
         </section>
+        <script type = "text/javascript" src = "groupmaking.js"></script>
     </body>
 </html>

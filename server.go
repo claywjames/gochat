@@ -6,6 +6,7 @@ import (
     "net/http"
     "github.com/gorilla/mux"
     "html/template"
+    "strconv"
 )
 
 func main() {
@@ -37,16 +38,26 @@ func createGroupPageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func groupCreationHandler(w http.ResponseWriter, r *http.Request) {
-    groupName, groupMember := r.FormValue("groupName"), r.FormValue("groupMember")
+    groupName := r.FormValue("groupName")
     creator := getUsername(r)
-    groupMemberAccount, err := getAccount(groupMember)
-    if err != nil {
-        log.Println(err)
-        return
-    }
-    creatorAccount, _ := getAccount(creator)
 
-    err = createGroup(groupName, []clientAccount{creatorAccount, groupMemberAccount})
+    groupMemberNames := make([]string, 0)
+    groupMemberNames = append(groupMemberNames, creator);
+    for i := 1; r.FormValue("groupMember" + strconv.Itoa(i)) != ""; i++ {
+        groupMemberNames = append(groupMemberNames, r.FormValue("groupMember" + strconv.Itoa(i)))
+    }
+
+    groupMembers := make([]clientAccount, 0)
+    for _, member := range groupMemberNames {
+        groupMemberAccount, err := getAccount(member)
+        if err != nil {
+            log.Println(err)
+            return
+        }
+        groupMembers = append(groupMembers, groupMemberAccount)
+    }
+
+    err := createGroup(groupName, groupMembers)
     if err != nil {
         log.Println(err)
         return
