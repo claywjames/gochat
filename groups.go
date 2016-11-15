@@ -5,6 +5,7 @@ import (
     "gopkg.in/mgo.v2/bson"
     "errors"
     "log"
+    "time"
 )
 
 type group struct {
@@ -43,7 +44,7 @@ func createGroup(name string, members []clientAccount) error {
         return err
     }
     c = session.DB("gochat").C(name)
-    err = c.Insert(&msg{"I have created " + name, members[0].Username})
+    err = c.Insert(&msg{"I have created " + name, members[0].Username, time.Now().Format(time.Stamp)})
 
     c = session.DB("gochat").C("accounts")
     for _, member := range members {

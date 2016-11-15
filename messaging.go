@@ -6,11 +6,13 @@ import (
     "github.com/gorilla/websocket"
     "github.com/gorilla/mux"
     "gopkg.in/mgo.v2"
+    "time"
 )
 
 type msg struct {
     Message string
     Sender string
+    TimeStamp string
 }
 
 var upgrader = websocket.Upgrader{
@@ -35,7 +37,8 @@ func messagingHandler(w http.ResponseWriter, r *http.Request) {
                 log.Println(err)
                 break
             }
-            message.Sender = sender;
+            message.Sender = sender
+            message.TimeStamp = time.Now().Format(time.Stamp)
             saveMessage(message, activeGroup)
         }
     }()

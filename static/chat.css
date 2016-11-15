@@ -24,6 +24,31 @@ aside {
     overflow-y: auto;
 }
 
+.messageDiv {
+    background-color: slategray;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.messageContent {
+    color: white;
+    font-size: 20px;
+}
+
+.messageSender {
+    background-color: white;
+    color: #333333;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.messageTime {
+    color: white;
+    font-size: 14px;
+    font-style: italic;
+}
+
 form {
     position: absolute;
     top: 95%;
