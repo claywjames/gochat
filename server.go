@@ -106,22 +106,33 @@ func signupPageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func chatPageHandler(w http.ResponseWriter, r *http.Request) {
-    t := template.New("chat.html")
-    t, err := t.ParseFiles("static/chat.html")
-    if err != nil {
-        log.Println(err)
+    validRequest := false
+    account, _ := getAccount(getUsername(r))
+    requestedGroup := mux.Vars(r)["group"]
+    for _, group := range account.Groups {
+        if group.Name == requestedGroup {
+            validRequest = true
+        }
     }
-    user := getUsername(r)
-    account, _ := getAccount(user)
 
-    templateInfo := struct {
-        Groups []group
-        ActiveGroup string
-    } {
-        account.Groups,
-        mux.Vars(r)["group"],
-    }
-    if err = t.Execute(w, templateInfo); err != nil {
-        log.Println(err)
+    if validRequest {
+        t := template.New("chat.html")
+        t, err := t.ParseFiles("static/chat.html")
+        if err != nil {
+            log.Println(err)
+        }
+
+        templateInfo := struct {
+            Groups []group
+            ActiveGroup string
+        } {
+            account.Groups,
+            requestedGroup,
+        }
+        if err = t.Execute(w, templateInfo); err != nil {
+            log.Println(err)
+        }
+    } else {
+        http.Error(w, "This group either doesn't exist or you aren't a member.", 403)
     }
 }
