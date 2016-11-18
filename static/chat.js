@@ -1,4 +1,4 @@
-var socket = new WebSocket("ws://localhost:3000/websocket/" + window.location.href.split("/").pop());
+var socket = new WebSocket("ws://" + location.hostname+(location.port ? ':'+location.port: '') + location.pathname + "/websocket");
 
 socket.onopen = function() {console.log("connected")}
 socket.onclose = function(e) {console.log("connection closed: " + e.code)}

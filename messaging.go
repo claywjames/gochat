@@ -7,6 +7,7 @@ import (
     "github.com/gorilla/mux"
     "gopkg.in/mgo.v2"
     "time"
+    "os"
 )
 
 type msg struct {
@@ -44,7 +45,11 @@ func messagingHandler(w http.ResponseWriter, r *http.Request) {
     }()
 
     go func() {
-        session, err := mgo.Dial("localhost")
+        uri := os.Getenv("MONGODB_URI")
+        if uri == "" {
+            uri = "localhost"
+        }
+        session, err := mgo.Dial(uri)
         if err != nil {
             log.Println(err)
         }
@@ -67,7 +72,11 @@ func messagingHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func saveMessage(message msg, group string) {
-    session, err := mgo.Dial("localhost")
+    uri := os.Getenv("MONGODB_URI")
+    if uri == "" {
+        uri = "localhost"
+    }
+    session, err := mgo.Dial(uri)
     if err != nil {
         log.Println(err)
     }

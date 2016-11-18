@@ -18,7 +18,7 @@ func main() {
     r.HandleFunc("/createGroupPage", createGroupPageHandler)
     r.HandleFunc("/createGroup", groupCreationHandler).Methods("POST")
 
-    r.HandleFunc("/websocket/{group}", messagingHandler)
+    r.HandleFunc("/chat/{group}/websocket", messagingHandler)
 
     r.HandleFunc("/chat/{group}", chatPageHandler)
 
@@ -26,11 +26,16 @@ func main() {
     r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
     log.SetOutput(os.Stdout)
-    log.Println("Listening on port 3000...")
+
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = ":3000"
+    }
+    log.Println("Listening on port " + port)
     
     http.Handle("/", r)
 
-    http.ListenAndServe(":3000", nil)
+    http.ListenAndServe(port, nil)
 }
 
 func createGroupPageHandler(w http.ResponseWriter, r *http.Request) {

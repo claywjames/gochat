@@ -6,6 +6,7 @@ import (
     "errors"
     "log"
     "time"
+    "os"
 )
 
 type group struct {
@@ -14,7 +15,11 @@ type group struct {
 }
 
 func createGroup(name string, members []clientAccount) error {
-    session, err := mgo.Dial("localhost")
+    uri := os.Getenv("MONGODB_URI")
+    if uri == "" {
+        uri = "localhost"
+    }
+    session, err := mgo.Dial(uri)
     if err != nil {
         log.Println(err)
     }

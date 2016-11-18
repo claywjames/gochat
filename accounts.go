@@ -8,6 +8,7 @@ import (
     "io"
     "crypto/rand"
     "golang.org/x/crypto/scrypt"
+    "os"
 )
 
 type clientAccount struct {
@@ -21,7 +22,11 @@ func createAccount(username string, password string) error {
     if _, err := getAccount(username); err == nil {
         return errors.New("username taken")
     }
-    session, err := mgo.Dial("localhost")
+    uri := os.Getenv("MONGODB_URI")
+    if uri == "" {
+        uri = "localhost"
+    }
+    session, err := mgo.Dial(uri)
     if err != nil {
         log.Println(err)
     }
@@ -53,7 +58,11 @@ func hashPassword(plaintext string, salt []byte) []byte {
 }
 
 func getAccount(username string) (account clientAccount, err error) {
-    session, err := mgo.Dial("localhost")
+    uri := os.Getenv("MONGODB_URI")
+    if uri == "" {
+        uri = "localhost"
+    }
+    session, err := mgo.Dial(uri)
     if err != nil {
         log.Println(err)
     }
