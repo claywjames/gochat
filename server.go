@@ -29,13 +29,13 @@ func main() {
 
     port := os.Getenv("PORT")
     if port == "" {
-        port = ":3000"
+        port = "3000"
     }
     log.Println("Listening on port " + port)
     
     http.Handle("/", r)
 
-    http.ListenAndServe(port, nil)
+    http.ListenAndServe(":" + port, nil)
 }
 
 func createGroupPageHandler(w http.ResponseWriter, r *http.Request) {
