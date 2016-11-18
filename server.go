@@ -51,7 +51,8 @@ func groupCreationHandler(w http.ResponseWriter, r *http.Request) {
     for _, member := range groupMemberNames {
         groupMemberAccount, err := getAccount(member)
         if err != nil {
-            log.Println(err)
+            setFailedGroupCreationCookie(w, "member does not exist")
+            http.Redirect(w, r, "/createGroupPage", 302)
             return
         }
         groupMembers = append(groupMembers, groupMemberAccount)
@@ -59,31 +60,32 @@ func groupCreationHandler(w http.ResponseWriter, r *http.Request) {
 
     err := createGroup(groupName, groupMembers)
     if err != nil {
-        log.Println(err)
+        setFailedGroupCreationCookie(w, "group name taken")
+        http.Redirect(w, r, "/createGroupPage", 302)
         return
     }
     http.Redirect(w, r, "/chat/" + groupName, 302)
 }
 
 func landingPageHandler(w http.ResponseWriter, r *http.Request) {
-    http.ServeFile(w, r, "static/first.html")
+    http.ServeFile(w, r, "static/login.html")
 }
 
 func loginPageHandler(w http.ResponseWriter, r *http.Request) {
     username, password := r.FormValue("username"), r.FormValue("password")
     redirectTarget := "/"
-    if username != "" && password != "" {
-        if validateAccount(username, password) {
-            account, _ := getAccount(username)
-            if len(account.Groups) > 0 {
-                redirectTarget = "/chat/" + account.Groups[0].Name
-            } else {
-                redirectTarget = "/createGroupPage"
-            }
-            setSession(username, w)
+    if validateAccount(username, password) {
+        account, _ := getAccount(username)
+        if len(account.Groups) > 0 {
+            redirectTarget = "/chat/" + account.Groups[0].Name
+        } else {
+            redirectTarget = "/createGroupPage"
         }
-        http.Redirect(w, r, redirectTarget, 302)
+        setSession(username, w)
+    } else {
+        setBadLoginCookie(w)
     }
+    http.Redirect(w, r, redirectTarget, 302)
 }
 
 func logoutPageHandler(w http.ResponseWriter, r *http.Request) {
@@ -98,6 +100,7 @@ func signupPageHandler(w http.ResponseWriter, r *http.Request) {
         setSession(username, w)
         http.Redirect(w, r, "/createGroupPage", 302)
     } else {
+        setFailedSignUpCookie(w)
         http.Redirect(w, r, "/", 302)
     }
 }

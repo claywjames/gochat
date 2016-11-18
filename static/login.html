@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="login.css">
+  </head> 
+
+  <body>
+
+    <h1>GoChat</h1>
+    <h2>Sign Up!</h2>
+
+    <ul>
+      <li><a href="#Home Page">Home</a></li>
+      <li><a href="#Friends Page">Friends</a></li>
+      <li><a href="#About Page">About</a></li>
+      <li><a href="#Help Page">Help</a></li>
+    </ul>
+
+    <br><br><br><br>
+
+    <p>Sign up:</p>
+
+
+    <section class="signupForm">
+      <form name="signup" action="/signup" method="post" accept-charset="utf-8">
+        <ul>
+          <li><label for="username">Username</label>
+          <input name="username" placeholder="username" required></li>
+          <li><label for="password">Password</label>
+          <input type="password" name="password" placeholder="password" required></li>
+          <li>
+          <input type="submit" value="Sign Up"></li>
+        </ul>
+      </form>
+    </section>
+
+    <br><br>
+
+    <p2>Or log in if you already have an account:</p2>
+
+    <section class="loginform">
+      <div class="loginpage">
+        <form name = "login" action="/login" method = "post">
+          <p3>Username:</p3><br>
+          <input type="text" name="username" placeholder="username" required><br>
+          <p4>Password:</p4><br>
+          <input type="password" name="password" placeholder="password" required><br><br>
+          <input type="submit" value="Submit">
+        </form>
+      </div>  
+    </section>
+
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <script type = "text/javascript" src = "login.js"></script>
+  </body>
+</html>

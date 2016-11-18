@@ -16,6 +16,7 @@ func setSession(username string, w http.ResponseWriter) {
             Name:  "session",
             Value: encoded,
             Path:  "/",
+           // Secure: true,
         }
         http.SetCookie(w, cookie)
     }
@@ -39,4 +40,16 @@ func getUsername(r *http.Request) (username string) {
         }
     }
     return username
+}
+
+func setBadLoginCookie(w http.ResponseWriter) {
+    http.SetCookie(w, &http.Cookie{Name: "login", Value: "Failed", Path: "/",})
+}
+
+func setFailedSignUpCookie(w http.ResponseWriter) {
+    http.SetCookie(w, &http.Cookie{Name: "signup", Value: "Failed", Path: "/",})
+}
+
+func setFailedGroupCreationCookie(w http.ResponseWriter, reason string) {
+    http.SetCookie(w, &http.Cookie{Name: "creation", Value: reason, Path: "/",})
 }
