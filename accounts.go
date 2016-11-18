@@ -39,7 +39,7 @@ func createAccount(username string, password string) error {
     }
     hashedPassword := hashPassword(password, salt)
 
-    c := session.DB("gochat").C("accounts")
+    c := session.DB("heroku_jhn2m29z").C("accounts")
     groups := []group{}
     err = c.Insert(&clientAccount{username, hashedPassword, salt, groups})
     if err != nil {
@@ -68,7 +68,7 @@ func getAccount(username string) (account clientAccount, err error) {
     }
     defer session.Close()
 
-    c := session.DB("gochat").C("accounts")
+    c := session.DB("heroku_jhn2m29z").C("accounts")
 
     err = c.Find(bson.M{"username":username}).One(&account)
     return 

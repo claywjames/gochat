@@ -25,7 +25,7 @@ func createGroup(name string, members []clientAccount) error {
     }
     defer session.Close()
 
-    c := session.DB("gochat").C("groups")
+    c := session.DB("heroku_jhn2m29z").C("groups")
     err = c.Find(bson.M{"name" : name}).One(nil)
     if err == nil {
         return errors.New("Group Name Taken")
@@ -37,7 +37,7 @@ func createGroup(name string, members []clientAccount) error {
         return err
     }
 
-    groupMessageCollection := session.DB("gochat").C(name)
+    groupMessageCollection := session.DB("heroku_jhn2m29z").C(name)
     collectionInfo := &mgo.CollectionInfo{
         Capped: true,
         MaxBytes: 10000000000,
@@ -48,10 +48,10 @@ func createGroup(name string, members []clientAccount) error {
     if err != nil {
         return err
     }
-    c = session.DB("gochat").C(name)
+    c = session.DB("heroku_jhn2m29z").C(name)
     err = c.Insert(&msg{"I have created " + name, members[0].Username, time.Now().Format(time.Stamp)})
 
-    c = session.DB("gochat").C("accounts")
+    c = session.DB("heroku_jhn2m29z").C("accounts")
     for _, member := range members {
         member.Groups = append(member.Groups, newGroup)
         err = c.Update(bson.M{"username": member.Username}, bson.M{"$set": bson.M{"groups": member.Groups}})

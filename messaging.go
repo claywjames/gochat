@@ -55,7 +55,7 @@ func messagingHandler(w http.ResponseWriter, r *http.Request) {
         }
         defer session.Close()
 
-        c := session.DB("gochat").C(activeGroup)
+        c := session.DB("heroku_jhn2m29z").C(activeGroup)
         newMessage := c.Find(nil).Tail(-1)
         defer newMessage.Close()
 
@@ -82,7 +82,7 @@ func saveMessage(message msg, group string) {
     }
     defer session.Close()
 
-    c := session.DB("gochat").C(group)
+    c := session.DB("heroku_jhn2m29z").C(group)
     err = c.Insert(&message)
     if err != nil {
         log.Println(err)
