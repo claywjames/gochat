@@ -1,4 +1,10 @@
-var socket = new WebSocket("wss://" + location.hostname+(location.port ? ':'+location.port: '') + location.pathname + "/websocket");
+if (location.protocal == "https:") {
+    var websocketProtocol = "wss://";
+} else {
+    var websocketProtocol = "ws://";
+}
+
+var socket = new WebSocket(websocketProtocol + location.hostname+(location.port ? ':'+location.port: '') + location.pathname + "/websocket");
 
 socket.onopen = function() {console.log("connected")}
 socket.onclose = function(e) {console.log("connection closed: " + e.code)}

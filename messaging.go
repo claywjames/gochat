@@ -69,6 +69,12 @@ func messagingHandler(w http.ResponseWriter, r *http.Request) {
             }
         }
     }()
+
+    go func() {
+        for range time.Tick(30 * time.Second){
+            conn.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(10 * time.Second))
+        }
+    }()
 }
 
 func saveMessage(message msg, group string) {
