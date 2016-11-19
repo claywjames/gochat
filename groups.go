@@ -40,7 +40,7 @@ func createGroup(name string, members []clientAccount) error {
     groupMessageCollection := session.DB("heroku_jhn2m29z").C(name)
     collectionInfo := &mgo.CollectionInfo{
         Capped: true,
-        MaxBytes: 10000000000,
+        MaxBytes: 1048576,
         MaxDocs: 1000,
     }
 
