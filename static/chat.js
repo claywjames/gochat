@@ -1,4 +1,4 @@
-if (location.protocal == "https:") {
+if (location.protocol == "https:") {
     var websocketProtocol = "wss://";
 } else {
     var websocketProtocol = "ws://";
