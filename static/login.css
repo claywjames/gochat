@@ -15,14 +15,9 @@ h2 {
 }
 
 ul {
-    display: block;
-    text-align: center;
-    list-style-position:inside;
-    font-family:arial;
+    font-family: arial;
     list-style-type: none;
-    margin: auto;
     padding: 0;
-    overflow: hidden;
     background-color: #333333;
 }
 
@@ -51,28 +46,26 @@ input{
   width: 190px;
 }
 
-.form {
+form {
   background-color: #333333;
   color: white;
   padding: 50px;
   width: 15vw;
-  height: 20vh;
-  margin-top: 10vh;  
+  min-width: 300px;
+  height: 20vh; 
+  min-height: 150px;
   border-radius: 10px;
-}
-
-#signup {
-  float: left;
-  margin-left: 20vw;
-}
-
-#login {
-  float: right;
-  margin-right: 20vw;
+  margin: 7px 0px 7px 0px;
 }
 
 #formContainer {
-  margin-top: 18vh;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-content: space-between;
+  align-items: center;
+  margin-top: 10vw;
   background-color: #C63D0F;
-  height: 50vh;
+  padding: 50px 0px 50px 0px;
+  overflow: hidden;
 }

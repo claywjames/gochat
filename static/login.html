@@ -11,9 +11,8 @@
     </header>
 
     <div id = "formContainer">
-    <section class = "form" id = "signup">
-      <h2>Sign Up:</h2>
       <form name="signup" action="/signup" method="post" accept-charset="utf-8">
+        <h2>Sign Up:</h2>
         <ul>
           <li><label for="username">Username</label><br>
           <input name="username" placeholder="username" required></li>
@@ -22,20 +21,17 @@
           <li><input type="submit" value="Sign Up"></li>
         </ul>
       </form>
-    </section>
-
-    <section class = "form" id = "login">
+      
+      <form name = "login" action="/login" method = "post" accept-charset="utf-8">
         <h2>Log In:</h2>
-        <form name = "login" action="/login" method = "post" accept-charset="utf-8">
-          <ul>
-            <li><label for = "username">Username:</label><br>
-            <input type="text" name="username" placeholder="username" required></li>
-            <li><label for = "password">Password:</label><br>
-            <input type="password" name="password" placeholder="password" required></li>
-            <li><input type="submit" value="Log in"></li>
-          </ul>
-        </form>
-    </section>
+        <ul>
+          <li><label for = "username">Username:</label><br>
+          <input type="text" name="username" placeholder="username" required></li>
+          <li><label for = "password">Password:</label><br>
+          <input type="password" name="password" placeholder="password" required></li>
+          <li><input type="submit" value="Log in"></li>
+        </ul>
+      </form>
     </div>
 
     <script type = "text/javascript" src = "login.js"></script>
