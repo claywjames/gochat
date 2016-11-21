@@ -12,6 +12,7 @@ h1 {
 
 h2 {
   font-family: arial;
+  margin: 0px;
 }
 
 ul {
@@ -24,20 +25,20 @@ ul {
 li {
   display: block;
   color: #fff;
-  margin: auto;
+  margin: 10px 0px 10px 0px;
   padding: 5px;
 }
 
 input:not([type=submit]) {
   padding: 1px;
-  margin: auto;
+  margin: 2px 0px 2px 0px;
   border: 2px solid rgba(0, 0, 0, 0.2);
   border-radius: 2px;
   box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, 0.1), 
         0px 1px 0px 0px rgba(250, 250, 250, 0.5) ;
   text-align: left;
   font-family: arial;
-  width: 180px;
+  width: 300px;
 }
 
 input{
@@ -49,11 +50,11 @@ input{
 form {
   background-color: #333333;
   color: white;
-  padding: 50px;
+  padding: 25px 10px 25px 10px;
   width: 400px;
-  height: 200px;
+  height: 250px;
   border-radius: 10px;
-  margin: 7px 0px 7px 0px;
+  margin: 7px 40px 7px 40px;
 }
 
 #formContainer {
