@@ -31,20 +31,28 @@ func messagingHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    go func() {
+    quit := make(chan int)
+    go func(quit chan int) {
         for {
-            message := msg{}
-            if err := conn.ReadJSON(&message); err != nil {
-                log.Println(err)
-                break
+            select {
+            case <- quit:
+                return
+            default:
+                message := msg{}
+                if err := conn.ReadJSON(&message); err != nil {
+                    log.Println(err)
+                    conn.Close()
+                    quit <- 0
+                    break
+                }
+                message.Sender = sender
+                message.TimeStamp = time.Now().Format(time.Stamp)
+                saveMessage(message, activeGroup)
             }
-            message.Sender = sender
-            message.TimeStamp = time.Now().Format(time.Stamp)
-            saveMessage(message, activeGroup)
         }
-    }()
+    }(quit)
 
-    go func() {
+    go func(quit chan int) {
         uri := os.Getenv("MONGODB_URI")
         if uri == "" {
             uri = "localhost"
@@ -61,20 +69,31 @@ func messagingHandler(w http.ResponseWriter, r *http.Request) {
 
         message := msg{};
         for {
-            if !newMessage.Next(&message) {
+            select {
+            case <- quit:
+                return
+            default:
+                if !newMessage.Next(&message) {
                 break
-            }
-            if err := conn.WriteJSON(message); err != nil {
-                log.Println(err)
+                }
+                if err := conn.WriteJSON(message); err != nil {
+                    log.Println(err)
+                }
             }
         }
-    }()
+    }(quit)
 
-    go func() {
-        for range time.Tick(30 * time.Second){
-            conn.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(10 * time.Second))
+    go func(quit chan int) {
+        for range time.Tick(time.Second * 30){
+            select {
+            case <- quit:
+                return
+            default:
+                conn.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(15 * time.Second))
+                log.Println("ping")
+            }
         }
-    }()
+    }(quit)
 }
 
 func saveMessage(message msg, group string) {
