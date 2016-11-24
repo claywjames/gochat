@@ -6,22 +6,23 @@
     </head>
     <body>
         <header>
-            <h1>GoChat</h1>
+            <h1>MangoChat</h1>
         </header>
         <aside>
-            <a href = "/createGroupPage"><button>Create Group</button></a>
+            <h3>Groups</h3>
             {{range .Groups}}
-                <br><a href = "/chat/{{.Name}}">{{.Name}}</a>
+                <a href = "/chat/{{.Name}}">{{.Name}}</a>
             {{end}}
+            <a href = "/createGroupPage"><button>Create New Group</button></a>
         </aside>
         <div id = "messageBox">
-            <h1>{{.ActiveGroup}}</h1>
+            <h2>{{.ActiveGroup}}</h2>
             <div id = "messages"></div>
+            <form id = "chatForm">
+                <input id = "messageInput" placeholder = "Send a message...">
+                <input id = "sendButton" type = "submit" value = "send">
+            </form>
         </div>
-        <form id = "chatForm">
-            <input id = "messageInput" placeholder = "Send a message...">
-            <input id = "sendButton" type = "submit" value = "send">
-        </form>
         <script type = "text/javascript" src = "/../chat.js"></script>
     </body>
 </html>

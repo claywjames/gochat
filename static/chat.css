@@ -1,17 +1,43 @@
-
-h1   {color:blue;font-family:arial;}
-
-header {
+body {
     text-align: center;
+    background-color: #FDF3E7;
+    font-family: arial;
+}
+
+h1 {
+    color: #C63D0F;
+    font-size: 50px;
+}
+
+h2 {
+    margin-top: 0px;
+    color: #333333;
+    text-align: left;
+    font-size: 2em;
+}
+
+h3 {
+    color: white;
+    font-size: 20px;
+    margin-bottom: 5px;
 }
 
 aside {
+    margin-top: 45px;
     float: left;
-    background-color: lightsteelblue;
-    border-radius: 5px;
+    background-color: #333333;
+    border-radius: 10px;
     padding: 5px;
+    height: 75vh;
     width: 10vw;
     text-align: center;
+}
+
+aside a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    margin: 0px 0px 10px 0px;
 }
 
 #messageBox {
@@ -20,12 +46,13 @@ aside {
 }
 
 #messages {
+    height: 75vh;
     max-height: 75vh;
     overflow-y: auto;
 }
 
 .messageDiv {
-    background-color: slategray;
+    background-color: #333333;
     border-radius: 10px;
     padding: 10px;
     margin-bottom: 15px;
@@ -33,26 +60,28 @@ aside {
 
 .messageContent {
     color: white;
-    font-size: 20px;
+    text-align: left;
+    font-size: 1.1em;
 }
 
 .messageSender {
-    background-color: white;
-    color: #333333;
-    border-radius: 10px;
-    padding: 5px;
+    color: white;
+    font-size: 1.5em;
+    font-style: bold;
+    text-align: left;
+    padding: 0px 0px 5px 0px;
 }
 
 .messageTime {
     color: white;
-    font-size: 14px;
+    font-size: .7em;
     font-style: italic;
+    text-align: left;
 }
 
 form {
-    position: absolute;
-    top: 95%;
-    width: 98%;
+    width: 100%;
+    margin-top: 15px;
 }
 
 #messageInput {
