@@ -8,20 +8,22 @@
         <header>
             <h1>MangoChat</h1>
         </header>
-        <aside>
-            <h3>Groups</h3>
-            {{range .Groups}}
-                <a href = "/chat/{{.Name}}">{{.Name}}</a>
-            {{end}}
-            <a href = "/createGroupPage"><button>Create New Group</button></a>
-        </aside>
-        <div id = "messageBox">
-            <h2>{{.ActiveGroup}}</h2>
-            <div id = "messages"></div>
-            <form id = "chatForm">
-                <input id = "messageInput" placeholder = "Send a message...">
-                <input id = "sendButton" type = "submit" value = "send">
-            </form>
+        <div id = "contentContainer">
+            <aside>
+                <h3>Groups</h3>
+                {{range .Groups}}
+                    <a href = "/chat/{{.Name}}">{{.Name}}</a>
+                {{end}}
+                <a href = "/createGroupPage"><button>Create New Group</button></a>
+            </aside>
+            <div id = "messageBox">
+                <h2>{{.ActiveGroup}}</h2>
+                <div id = "messages"></div>
+                <form id = "chatForm">
+                    <input id = "messageInput" placeholder = "Send a message...">
+                    <input id = "sendButton" type = "submit" value = "send">
+                </form>
+            </div>
         </div>
         <script type = "text/javascript" src = "/../chat.js"></script>
     </body>
