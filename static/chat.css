@@ -50,7 +50,6 @@ aside a {
 }
 
 #messageBox {
-    min-width: 650px;
     flex-grow: 100;
     margin-left: 25px;
     margin-right: 25px;
