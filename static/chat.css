@@ -92,12 +92,12 @@ aside a {
 form {
     width: 100%;
     display: flex;
-    align-items: stretch;
-    height: 40px
+    align-items: center;
 }
 
 #messageInput {
     flex-grow: 1;
+    height: 40px;
     line-height: 40px;
     font-size: 17px;
     padding: 1px;
@@ -111,6 +111,7 @@ form {
 #sendButton {
     margin: 2px;
     padding: 1px 6px 1px 6px;
+    height: 46px;
     width: 60px;
 }
 
