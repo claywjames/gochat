@@ -64,8 +64,7 @@ aside a {
 #messages {
     height: 75vh;
     max-height: 75vh;
-    position: fixed;
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 
 .messageDiv {
