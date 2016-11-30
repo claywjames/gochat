@@ -56,8 +56,8 @@ form {
   background-color: #333333;
   color: white;
   padding: 25px 10px 25px 10px;
-  width: 400px;
-  height: 250px;
+  min-width: 400px;
+  min-height: 300px;
   border-radius: 10px;
   margin: 7px 40px 7px 40px;
 }
