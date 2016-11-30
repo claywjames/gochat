@@ -35,7 +35,6 @@ aside {
     background-color: #333333;
     border-radius: 5px;
     padding: 5px;
-    min-width: 250px;
     text-align: center;
     flex-grow: 1;
     margin-left: 25px;
@@ -50,9 +49,16 @@ aside a {
 }
 
 #messageBox {
-    flex-grow: 100;
+    flex-grow: 20;
     margin-left: 25px;
     margin-right: 25px;
+}
+
+@media (max-width: 999px) {
+    #messageBox {
+        width: 100%;
+        margin: 0px;
+    }
 }
 
 #messages {
