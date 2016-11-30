@@ -7,16 +7,21 @@ body {
 h1 {
   color: #C63D0F;
   font-family: arial;
-  font-size: 50px;
+  font-size: 3.25em;
 }
 
 h2 {
   font-family: arial;
   margin: 0px;
+  font-size: 1.4em;
 }
 
 ul {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     font-family: arial;
+    font-size: 1.2em;
     list-style-type: none;
     padding: 0;
     background-color: #333333;
@@ -55,6 +60,31 @@ form {
   height: 250px;
   border-radius: 10px;
   margin: 7px 40px 7px 40px;
+}
+
+@media (max-width: 999px) {
+  form {
+    flex-grow: 1;
+    height: 30vh;
+  }
+
+  ul {
+    height: 20vh;
+  }
+
+
+  input:not([type=submit]) {
+    width: 80%;
+    height: 40px;
+    line-height: 40px;
+    font-size: 17px;
+  }
+
+  input {
+    height: 40px;
+    font-size: 1.2em;
+  }
+
 }
 
 #formContainer {
