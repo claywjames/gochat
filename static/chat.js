@@ -33,7 +33,7 @@ socket.onmessage = function(e) {
     messageDiv.appendChild(messageTime);
     messages.appendChild(messageDiv);
     
-    messages.scrollTop = 99999999999999999999999; // scrollHeight will not work on mobile due to scaling
+    messages.scrollTop = messages.scrollHeight;
 }
 
 function sendMessage() {
