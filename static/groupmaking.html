@@ -2,21 +2,20 @@
 <html>
     <head>
         <title>Make a Group</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
         <link href = "groupmaking.css" rel = "stylesheet">
     </head>
     <body>
-        <section class="makegroup">
-            <form name="groupcreation" action="/createGroup" method="post" accept-charset="utf-8">
-                <ul>
-                    <li><label for="groupName">Group Name</label>
-                    <input name="groupName" placeholder="Enter group name" required></li>
-                    <li id = "groupMembers"><label for="groupMember1">Group Members</label>
-                    <input name="groupMember1" placeholder="Enter group memeber" required></li>
-                    <li><button type = "button" onclick="addMember();">Add Another Member</button></li>
-                    <li><input type="submit" value="Create Group"></li>
-                </ul>
-            </form>
-        </section>
+        <form name="groupcreation" action="/createGroup" method="post" accept-charset="utf-8">
+            <ul>
+                <li><label for="groupName">Group Name:</label>
+                <input name="groupName" placeholder="Enter group name" required></li>
+                <li id = "groupMembers"><label for="groupMember1">Group Members:</label>
+                <input name="groupMember1" placeholder="Enter group memeber" required></li>
+                <li><button type = "button" onclick="addMember();">Add Another Member</button></li>
+                <li><input type="submit" value="Create Group"></li>
+            </ul>
+        </form>
         <script type = "text/javascript" src = "groupmaking.js"></script>
     </body>
 </html>

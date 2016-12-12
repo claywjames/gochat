@@ -1,19 +1,33 @@
-.makegroup ul {
-  padding: 5px;
-  margin: 0 auto;
-  width: 200px;
-  display:  block;
+body {
+  background-color: #FDF3E7;
   text-align: center;
-
 }
 
-.makegroup li {
+form {
+  position: absolute;
+  left: 50%;
+  margin-left: -150px;
+}
+
+ul {
+  padding: 5px;
+  width: 300px;
+  display:  block;
+}
+
+li {
   color: #333333;
   padding: 5px;
   list-style: none;
 }
 
-.makegroup input:not([type=submit]) {
+label {
+  display: block;
+  padding-bottom: 10px;
+  font-size: 1.1em;
+}
+
+input:not([type=submit]) {
   padding: 1px;
   margin-bottom: 10px;
   border: 2px solid rgba(0, 0, 0, 0.2);
@@ -21,14 +35,24 @@
   box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, 0.1), 
         0px 1px 0px 0px rgba(250, 250, 250, 0.5) ;
   text-align: left;
-  font-family: arial;
-  width: 180px;
-
+  width: 250px;
 }
 
-.makegroup input{
+input{
   text-align: center;
-  width: 50%;
-  display: auto;
-  
+  display: auto; 
+}
+
+@media (max-width: 999px) {
+  input:not([type=submit]) {
+    height: 30px;
+    line-height: 30px;
+    font-size: 17px;
+  }
+
+  input, button {
+    height: 40px;
+    font-size: 1.2em;
+  }
+
 }
