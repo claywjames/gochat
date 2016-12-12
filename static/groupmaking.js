@@ -13,5 +13,5 @@ if (cookieList.includes("creation=member does not exist")) {
 function addMember() {
     var groupMembers = document.getElementById("groupMembers");
     var numMembers = groupMembers.childElementCount;
-    groupMembers.insertAdjacentHTML("beforeend", "<input name='groupMember" + numMembers + "' placeholder='Enter group memeber' required>")
+    groupMembers.insertAdjacentHTML("beforeend", "<input name='groupMember" + numMembers + "' placeholder='Enter group member' required>")
 }
