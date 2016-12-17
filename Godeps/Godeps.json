@@ -4,6 +4,10 @@
 	"GodepVersion": "v75",
 	"Deps": [
 		{
+			"ImportPath": "github.com/dchest/uniuri",
+			"Rev": "8902c56451e9b58ff940bbe5fec35d5f9c04584a"
+		},
+		{
 			"ImportPath": "github.com/gorilla/mux",
 			"Comment": "v1.1-27-g757bef9",
 			"Rev": "757bef944d0f21880861c2dd9c871ca543023cba"
