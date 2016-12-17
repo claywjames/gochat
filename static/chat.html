@@ -15,10 +15,11 @@
                 {{range .Groups}}
                     <a href = "/chat/{{.Name}}">{{.Name}}</a>
                 {{end}}
+                <a href = "/joinGroupPage"><button>Join Group</button></a>
                 <a href = "/createGroupPage"><button>Create New Group</button></a>
             </aside>
             <div id = "messageBox">
-                <h2>{{.ActiveGroup}}</h2>
+                <h2>{{.ActiveGroup}}: {{.ActiveGroupCode}}</h2>
                 <div id = "messages"></div>
                 <form id = "chatForm">
                     <input id = "messageInput" placeholder = "Send a message...">

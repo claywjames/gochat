@@ -90,7 +90,6 @@ func messagingHandler(w http.ResponseWriter, r *http.Request) {
                 return
             default:
                 conn.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(15 * time.Second))
-                log.Println("ping")
             }
         }
     }(quit)

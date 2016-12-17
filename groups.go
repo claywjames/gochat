@@ -3,6 +3,7 @@ package main
 import (
     "gopkg.in/mgo.v2"
     "gopkg.in/mgo.v2/bson"
+    "github.com/dchest/uniuri"
     "errors"
     "log"
     "time"
@@ -12,9 +13,10 @@ import (
 type group struct {
     Name string
     Members []clientAccount
+    Code string
 }
 
-func createGroup(name string, members []clientAccount) error {
+func getGroup(name string) (g group, err error) {
     uri := os.Getenv("MONGODB_URI")
     if uri == "" {
         uri = "localhost"
@@ -26,12 +28,47 @@ func createGroup(name string, members []clientAccount) error {
     defer session.Close()
 
     c := session.DB("heroku_jhn2m29z").C("groups")
-    err = c.Find(bson.M{"name" : name}).One(nil)
+    err = c.Find(bson.M{"name" : name}).One(&g)
+    
+    return
+}
+
+func getGroupFromCode(code string) (g group, err error) {
+    uri := os.Getenv("MONGODB_URI")
+    if uri == "" {
+        uri = "localhost"
+    }
+    session, err := mgo.Dial(uri)
+    if err != nil {
+        log.Println(err)
+    }
+    defer session.Close()
+
+    c := session.DB("heroku_jhn2m29z").C("groups")
+    err = c.Find(bson.M{"code" : code}).One(&g)   
+    
+    return
+}
+
+func createGroup(name string, members []clientAccount) error {
+    uri := os.Getenv("MONGODB_URI")
+    if uri == "" {
+        uri = "localhost"
+    }
+
+    _, err := getGroup(name)
     if err == nil {
         return errors.New("Group Name Taken")
     }
 
-    newGroup := group{name, members}
+    session, err := mgo.Dial(uri)
+    if err != nil {
+        log.Println(err)
+    }
+    defer session.Close()
+
+    newGroup := group{name, members, uniuri.NewLen(8)}
+    c := session.DB("heroku_jhn2m29z").C("groups")
     err = c.Insert(&newGroup)
     if err != nil {
         return err
@@ -41,13 +78,13 @@ func createGroup(name string, members []clientAccount) error {
     collectionInfo := &mgo.CollectionInfo{
         Capped: true,
         MaxBytes: 1048576,
-        MaxDocs: 1000,
+        MaxDocs: 100,
     }
-
     err = groupMessageCollection.Create(collectionInfo)
     if err != nil {
         return err
     }
+
     c = session.DB("heroku_jhn2m29z").C(name)
     err = c.Insert(&msg{"I have created " + name, members[0].Username, time.Now().Format(time.Stamp)})
 
@@ -60,4 +97,36 @@ func createGroup(name string, members []clientAccount) error {
         }
     }
     return nil
+}
+
+func (g * group) addGroupMember(joiner clientAccount) (err error) {
+    if err != nil {
+        return
+    }
+
+    uri := os.Getenv("MONGODB_URI")
+    if uri == "" {
+        uri = "localhost"
+    }
+    session, err := mgo.Dial(uri)
+    if err != nil {
+        log.Println(err)
+    }
+    defer session.Close()
+
+    g.Members = append(g.Members, joiner)
+    c := session.DB("heroku_jhn2m29z").C("groups")
+    err = c.Update(bson.M{"name" : g.Name}, bson.M{"$set": bson.M{"members": g.Members}})
+    if err != nil {
+        return
+    }
+
+    c = session.DB("heroku_jhn2m29z").C("accounts")
+    joiner.Groups = append(joiner.Groups, *g)
+    err = c.Update(bson.M{"username": joiner.Username}, bson.M{"$set": bson.M{"groups": joiner.Groups}})
+    if err != nil {
+        return
+    }
+
+    return
 }
