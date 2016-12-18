@@ -31,10 +31,12 @@ button {
     background-color: #333333;
     height: 150px;
     width: 250px;
+    color: white;
+    font-size: 1.5em;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 a {
-    color: white;
-    font-size: 2em;
     text-decoration: none;
 }
