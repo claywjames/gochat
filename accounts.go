@@ -84,3 +84,24 @@ func validateAccount(username string, password string) bool {
     }
     return true
 }
+
+func (account * clientAccount) addGroup(g group) (err error) {
+    uri := os.Getenv("MONGODB_URI")
+    if uri == "" {
+        uri = "localhost"
+    }
+    session, err := mgo.Dial(uri)
+    if err != nil {
+        log.Println(err)
+    }
+    defer session.Close()
+
+    c := session.DB("heroku_jhn2m29z").C("accounts")
+    account.Groups = append(account.Groups, g)
+    err = c.Update(bson.M{"username": account.Username}, bson.M{"$set": bson.M{"groups": account.Groups}})
+    if err != nil {
+        return
+    }
+
+    return
+}

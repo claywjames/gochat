@@ -77,7 +77,7 @@ func createGroup(name string, members []clientAccount) error {
     groupMessageCollection := session.DB("heroku_jhn2m29z").C(name)
     collectionInfo := &mgo.CollectionInfo{
         Capped: true,
-        MaxBytes: 1048576,
+        MaxBytes: 512000,
         MaxDocs: 100,
     }
     err = groupMessageCollection.Create(collectionInfo)
@@ -100,10 +100,6 @@ func createGroup(name string, members []clientAccount) error {
 }
 
 func (g * group) addGroupMember(joiner clientAccount) (err error) {
-    if err != nil {
-        return
-    }
-
     uri := os.Getenv("MONGODB_URI")
     if uri == "" {
         uri = "localhost"
@@ -117,13 +113,6 @@ func (g * group) addGroupMember(joiner clientAccount) (err error) {
     g.Members = append(g.Members, joiner)
     c := session.DB("heroku_jhn2m29z").C("groups")
     err = c.Update(bson.M{"name" : g.Name}, bson.M{"$set": bson.M{"members": g.Members}})
-    if err != nil {
-        return
-    }
-
-    c = session.DB("heroku_jhn2m29z").C("accounts")
-    joiner.Groups = append(joiner.Groups, *g)
-    err = c.Update(bson.M{"username": joiner.Username}, bson.M{"$set": bson.M{"groups": joiner.Groups}})
     if err != nil {
         return
     }

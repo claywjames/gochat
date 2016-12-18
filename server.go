@@ -19,6 +19,7 @@ func main() {
     r.HandleFunc("/createGroup", groupCreationHandler).Methods("POST")
     r.HandleFunc("/joinGroupPage", joinGroupPageHandler)
     r.HandleFunc("/joinGroup", groupJoinHandler).Methods("POST")
+    r.HandleFunc("/newUserPage", newUserPageHandler)
 
     r.HandleFunc("/chat/{group}/websocket", messagingHandler)
 
@@ -40,20 +41,30 @@ func main() {
     http.ListenAndServe(":" + port, nil)
 }
 
+func newUserPageHandler(w http.ResponseWriter, r *http.Request) {
+    http.ServeFile(w, r, "static/newuser.html")
+}
+
 func joinGroupPageHandler(w http.ResponseWriter, r *http.Request) {
     http.ServeFile(w, r, "static/joingroup.html")
 }
 
 func groupJoinHandler(w http.ResponseWriter, r *http.Request) {
     groupCode := r.FormValue("groupCode")
-    joiner := getUsername(r)
+    joinerAccount, _ := getAccount(getUsername(r))
     group, err := getGroupFromCode(groupCode)
     if err != nil {
         log.Println(err)
         return
     }
-    joinerAccount, _ := getAccount(joiner)
+
     err = group.addGroupMember(joinerAccount)
+    if err != nil {
+        log.Println(err)
+        return
+    }
+
+    err = joinerAccount.addGroup(group)
     if err != nil {
         log.Println(err)
         return
@@ -108,7 +119,7 @@ func loginPageHandler(w http.ResponseWriter, r *http.Request) {
         if len(account.Groups) > 0 {
             redirectTarget = "/chat/" + account.Groups[0].Name
         } else {
-            redirectTarget = "/createGroupPage"
+            redirectTarget = "/newUserPage"
         }
         setSession(username, w)
     } else {
@@ -127,7 +138,7 @@ func signupPageHandler(w http.ResponseWriter, r *http.Request) {
     err := createAccount(username, password)
     if err == nil {
         setSession(username, w)
-        http.Redirect(w, r, "/createGroupPage", 302)
+        http.Redirect(w, r, "/newUserPage", 302)
     } else {
         setFailedSignUpCookie(w)
         http.Redirect(w, r, "/", 302)

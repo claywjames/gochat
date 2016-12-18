@@ -1,0 +1,40 @@
+body {
+  background-color: #FDF3E7;
+  text-align: center;
+  margin: 0px;
+}
+
+header {
+    display: block;
+    height: 30vh;
+    padding: 0px;
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+}
+
+h1 {
+    display: block;
+    color: #C63D0F;
+    font-size: 3.25em;
+    margin: 0px;
+}
+
+#buttonContainer {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    height: 66vh;
+}
+
+button {
+    display: block;
+    background-color: #333333;
+    height: 150px;
+    width: 250px;
+}
+
+a {
+    color: white;
+    font-size: 2em;
+    text-decoration: none;
+}
