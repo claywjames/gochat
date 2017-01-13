@@ -26,7 +26,9 @@ socket.onmessage = function(e) {
     messageSender.innerHTML = messageObj.Sender;
 
     messageTime.className = "messageTime";
-    messageTime.innerHTML = messageObj.TimeStamp;
+    var utcTime = new Date(messageObj.TimeStamp),
+        localTime = utcTime.toLocaleString();
+    messageTime.innerHTML = localTime;
 
     messageDiv.appendChild(messageSender);
     messageDiv.appendChild(messageContent);

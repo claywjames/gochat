@@ -46,7 +46,7 @@ func messagingHandler(w http.ResponseWriter, r *http.Request) {
                     break
                 }
                 message.Sender = sender
-                message.TimeStamp = time.Now().Format(time.Stamp)
+                message.TimeStamp = time.Now().UTC().Format(time.RFC3339)
                 saveMessage(message, activeGroup)
             }
         }
